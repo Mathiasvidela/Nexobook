@@ -13,6 +13,7 @@
     "desktop": "cross-env NEXOBOOK_API_URL=http://127.0.0.1:3211 NEXOBOOK_DESKTOP_PORT=3211 VITE_DEV_SERVER_URL=http://127.0.0.1:5180 concurrently -k \"vite --host 127.0.0.1 --port 5180 --strictPort\" \"wait-on http://127.0.0.1:5180 && electron .\"",
     "desktop:build": "npm run build && electron-builder",
     "desktop:mac": "npm run build && electron-builder --mac dmg zip",
+    "desktop:win": "npm run build && electron-builder --win nsis --x64",
     "server": "node server/index.js",
     "build": "vite build",
     "start": "node server/index.js",

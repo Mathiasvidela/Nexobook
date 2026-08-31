@@ -42,6 +42,23 @@ Nexobook-1.0.0-alpha.1-mac-arm64.zip
 
 La Alpha no está firmada ni notarizada por Apple. Para distribución pública será necesario configurar un certificado Apple Developer y notarización.
 
+## Generar Nexobook para Windows
+
+```bash
+npm run desktop:win
+```
+
+El instalador NSIS se genera dentro de `release/`. También puede generarse automáticamente desde GitHub Actions sin disponer de una computadora Windows local.
+
+## GitHub Actions
+
+Cada cambio enviado a `main` ejecuta las pruebas y genera artefactos descargables para:
+
+- Windows x64 (`.exe`).
+- macOS Apple Silicon (`.dmg` y `.zip`).
+
+Cuando se publica un tag `v*`, por ejemplo `v1.0.0-beta.1`, GitHub crea automáticamente una Release y adjunta los instaladores. Las versiones cuyo tag contiene `-alpha`, `-beta` o `-rc` se publican como preliminares.
+
 ## Desarrollo web
 
 ```bash

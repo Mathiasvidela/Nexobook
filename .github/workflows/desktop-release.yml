@@ -1,0 +1,119 @@
+name: Nexobook Desktop
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verificar aplicación
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v6
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar pruebas y compilación
+        run: npm run test:all
+
+      - name: Auditar dependencias de producción
+        run: npm audit --omit=dev --audit-level=high
+
+  build:
+    name: Crear ${{ matrix.name }}
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+            artifact: nexobook-windows-x64
+          - name: macOS Apple Silicon
+            os: macos-latest
+            artifact: nexobook-macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v6
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar interfaz
+        run: npm run build
+
+      - name: Crear instalador de Windows
+        if: runner.os == 'Windows'
+        run: npx electron-builder --win nsis --x64 --publish never
+
+      - name: Crear instaladores de macOS
+        if: runner.os == 'macOS'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac dmg zip --arm64 --publish never
+
+      - name: Guardar instalador de Windows
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/*.exe
+          if-no-files-found: error
+
+      - name: Guardar instaladores de macOS
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            release/*.dmg
+            release/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Publicar GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Descargar instaladores
+        uses: actions/download-artifact@v4
+        with:
+          path: release-files
+          merge-multiple: true
+
+      - name: Crear versión preliminar
+        if: contains(github.ref_name, '-')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release-files/* --prerelease --generate-notes --title "Nexobook $GITHUB_REF_NAME"
+
+      - name: Crear versión estable
+        if: ${{ !contains(github.ref_name, '-') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release-files/* --generate-notes --title "Nexobook $GITHUB_REF_NAME"
