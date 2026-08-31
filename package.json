@@ -1,0 +1,81 @@
+{
+  "name": "nexobook",
+  "productName": "Nexobook",
+  "description": "Organizador académico local, privado y sin cuentas.",
+  "author": "Mathias Videla",
+  "private": true,
+  "version": "1.0.0-alpha.1",
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "app": "concurrently \"node server/index.js\" \"vite\"",
+    "dev": "concurrently \"node server/index.js\" \"vite\"",
+    "desktop": "cross-env NEXOBOOK_API_URL=http://127.0.0.1:3211 NEXOBOOK_DESKTOP_PORT=3211 VITE_DEV_SERVER_URL=http://127.0.0.1:5180 concurrently -k \"vite --host 127.0.0.1 --port 5180 --strictPort\" \"wait-on http://127.0.0.1:5180 && electron .\"",
+    "desktop:build": "npm run build && electron-builder",
+    "desktop:mac": "npm run build && electron-builder --mac dmg zip",
+    "server": "node server/index.js",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "import": "node scripts/importPdfs.js",
+    "test": "node server/tests/storage.test.js",
+    "test:acceptance": "node server/tests/acceptance.test.js",
+    "test:all": "npm test && npm run test:acceptance && npm run build"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "lucide-react": "^0.475.0",
+    "marked": "^15.0.7",
+    "multer": "^1.4.5-lts.1",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^10.1.0",
+    "electron": "^44.1.0",
+    "electron-builder": "^26.15.3",
+    "vite": "^6.1.1",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "com.nexobook.desktop",
+    "productName": "Nexobook",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "server/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "dmg": {
+      "title": "Nexobook ${version}",
+      "artifactName": "Nexobook-${version}-${arch}.${ext}"
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Education",
+      "target": "AppImage"
+    },
+    "artifactName": "Nexobook-${version}-${os}-${arch}.${ext}"
+  }
+}
