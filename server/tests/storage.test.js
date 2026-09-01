@@ -1,7 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 import fs from 'fs';
-import { safeSaveJson, safeReadJson, initializeStorage } from '../utils/safeJsonStorage.js';
+import { safeSaveJson, safeReadJson, initializeStorage, resolveJsonPath } from '../utils/safeJsonStorage.js';
 import { validateSafePath, getStorageRoot } from '../utils/pathSecurity.js';
 
 console.log('--- RUNNING STORAGE & SECURITY TESTS ---');
@@ -31,6 +31,16 @@ try {
     'No debe duplicar el segmento storage/'
   );
   console.log('✓ Test 1b PASSED: La ruta storage/ se resuelve sin duplicarse.');
+
+  // Test 1c: Windows absolute paths must not be treated as bare filenames.
+  console.log('Test 1c: Windows absolute storage path...');
+  const windowsAbsolutePath = 'C:\\Users\\mathi\\OneDrive\\Documents\\Nexobook\\storage\\data\\materias.json';
+  assert.strictEqual(
+    resolveJsonPath(windowsAbsolutePath),
+    windowsAbsolutePath,
+    'No debe anteponer DATA_DIR a una ruta absoluta de Windows'
+  );
+  console.log('✓ Test 1c PASSED: La ruta absoluta de Windows se conserva intacta.');
 
   // Test 2: Safe JSON Write & Read
   console.log('Test 2: Safe JSON Atomic Write & Read...');

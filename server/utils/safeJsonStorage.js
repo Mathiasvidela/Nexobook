@@ -30,7 +30,7 @@ const DEFAULT_PERIODOS = [
 const DEFAULT_CONFIGURACION = {
   tema: 'dark',
   periodoActivoId: null,
-  version: '1.0.0-alpha.1'
+  version: '1.0.0-alpha.2'
 };
 
 const DEFAULT_MATERIAS = [
@@ -290,10 +290,17 @@ export function initializeStorage() {
 /**
  * Reads and parses a JSON file safely
  */
+export function resolveJsonPath(fileNameOrPath) {
+  const isBareJsonFile = fileNameOrPath.endsWith('.json')
+    && !path.isAbsolute(fileNameOrPath)
+    && !fileNameOrPath.includes('/')
+    && !fileNameOrPath.includes('\\');
+
+  return isBareJsonFile ? path.join(DATA_DIR, fileNameOrPath) : fileNameOrPath;
+}
+
 export function safeReadJson(fileNameOrPath) {
-  let targetPath = fileNameOrPath.endsWith('.json') && !fileNameOrPath.includes('/')
-    ? path.join(DATA_DIR, fileNameOrPath)
-    : fileNameOrPath;
+  let targetPath = resolveJsonPath(fileNameOrPath);
 
   targetPath = validateSafePath(targetPath);
 
@@ -328,9 +335,7 @@ export function safeReadJson(fileNameOrPath) {
  * 4. Rename tmp to target
  */
 export function safeSaveJson(fileNameOrPath, data) {
-  let targetPath = fileNameOrPath.endsWith('.json') && !fileNameOrPath.includes('/')
-    ? path.join(DATA_DIR, fileNameOrPath)
-    : fileNameOrPath;
+  let targetPath = resolveJsonPath(fileNameOrPath);
 
   targetPath = validateSafePath(targetPath);
 
