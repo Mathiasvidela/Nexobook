@@ -110,10 +110,10 @@ jobs:
         if: contains(github.ref_name, '-')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" release-files/* --prerelease --generate-notes --title "Nexobook $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" release-files/* --repo "$GITHUB_REPOSITORY" --prerelease --generate-notes --title "Nexobook $GITHUB_REF_NAME"
 
       - name: Crear versión estable
         if: ${{ !contains(github.ref_name, '-') }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" release-files/* --generate-notes --title "Nexobook $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" release-files/* --repo "$GITHUB_REPOSITORY" --generate-notes --title "Nexobook $GITHUB_REF_NAME"

@@ -36,8 +36,8 @@ npm run desktop:mac -- --arm64
 Los instaladores se generan dentro de `release/`:
 
 ```text
-Nexobook-1.0.0-alpha.2-arm64.dmg
-Nexobook-1.0.0-alpha.2-mac-arm64.zip
+Nexobook-1.0.0-alpha.3-arm64.dmg
+Nexobook-1.0.0-alpha.3-mac-arm64.zip
 ```
 
 La Alpha no está firmada ni notarizada por Apple. Para distribución pública será necesario configurar un certificado Apple Developer y notarización.
@@ -88,7 +88,7 @@ Este comando prueba el almacenamiento atómico, la seguridad de rutas, papelera,
 ## Versiones previstas
 
 ```text
-1.0.0-alpha.2  Corrección de inicio y almacenamiento en Windows
+1.0.0-alpha.3  Corrección de inicio en Windows y publicación automática
 1.0.0-beta.1   Funciones cerradas y pruebas ampliadas
 1.0.0-rc.1     Candidata final
 1.0.0          Primera versión estable

@@ -30,7 +30,7 @@ const DEFAULT_PERIODOS = [
 const DEFAULT_CONFIGURACION = {
   tema: 'dark',
   periodoActivoId: null,
-  version: '1.0.0-alpha.2'
+  version: '1.0.0-alpha.3'
 };
 
 const DEFAULT_MATERIAS = [

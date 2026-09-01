@@ -4,7 +4,7 @@
   "description": "Organizador académico local, privado y sin cuentas.",
   "author": "Mathias Videla",
   "private": true,
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
